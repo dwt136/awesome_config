@@ -4,6 +4,12 @@ local awful = require("awful")
 volume_widget = wibox.widget.textbox()
 volume_widget:set_align("right")
 
+mytimer = timer({ timeout = 3 })
+mytimer:connect_signal("timeout", function ()
+	volume_widget:set_text("")
+	mytimer:stop()
+end)
+
 function update_volume(widget)
    local fd = io.popen("amixer sget Master")
    local status = fd:read("*all")
@@ -19,12 +25,9 @@ function update_volume(widget)
    else
 	   volume = volume .. "M"
    end
-   widget:set_markup(" Vol:" .. volume)
+   widget:set_text(" Vol:" .. volume)
+   mytimer:again()
 end
 
 update_volume(volume_widget)
-
-mytimer = timer({ timeout = 30 })
-mytimer:connect_signal("timeout", function () update_volume(volume_widget) end)
-mytimer:start()
 
