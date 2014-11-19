@@ -62,6 +62,7 @@ local layouts =
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
+	awful.layout.suit.floating,
 }
 -- }}}
 
@@ -227,7 +228,7 @@ globalkeys = awful.util.table.join(
 
     -- Layout manipulation
 	awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
-	awful.key({ modkey,           }, "q", function () awful.util.spawn("chrome") end),
+	awful.key({ modkey,           }, "\\", function () awful.util.spawn("chrome") end),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
