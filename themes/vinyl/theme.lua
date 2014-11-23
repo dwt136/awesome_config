@@ -54,7 +54,8 @@ end
 
 --}}}
 
-theme.font          = "anorexia 9"
+--theme.font          = "Microsoft Yahei 9"
+theme.font          = "WenQuanYi Micro Hei 10"
 
 theme.bg_normal     = "#000000"
 theme.bg_focus      = "#000000"

@@ -271,6 +271,10 @@ globalkeys = awful.util.table.join(
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end),
 
+	-- Touchpad
+	awful.key({ }, "XF86TouchpadToggle", function ()
+		awful.util.spawn("/home/jeffwader/Programs/scripts/touchpad-toggle.sh") end),
+
 	-- Volume
 	awful.key({ }, "XF86AudioRaiseVolume", function ()
 		awful.util.spawn("amixer set Master 5%+")
