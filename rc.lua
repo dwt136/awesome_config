@@ -229,6 +229,7 @@ globalkeys = awful.util.table.join(
     -- Layout manipulation
 	awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
 	awful.key({ modkey,           }, "\\", function () awful.util.spawn("chrome") end),
+	awful.key({ modkey,           }, "]", function () awful.util.spawn("thunar") end),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
@@ -284,7 +285,14 @@ globalkeys = awful.util.table.join(
 		update_volume(volume_widget) end),
 	awful.key({ }, "XF86AudioMute", function ()
 		awful.util.spawn("amixer sset Master toggle")
-		update_volume(volume_widget) end)
+		update_volume(volume_widget) end),
+
+	-- hide/show wibox
+	awful.key({modkey}, "b", function()
+		for s = 1, screen.count() do
+			mywibox[s].visible = not mywibox[s].visible
+		end
+	end)
 )
 
 clientkeys = awful.util.table.join(
