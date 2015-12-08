@@ -44,7 +44,7 @@ beautiful.init("/home/jeffwader/.config/awesome/themes/vinyl/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "sakura"
-editor = os.getenv("EDITOR") or "nano"
+editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -227,9 +227,9 @@ globalkeys = awful.util.table.join(
     -- awful.key({ modkey,           }, "w", function () mymainmenu:show() end),
 
     -- Layout manipulation
-	awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
+	awful.key({ }, "Print", function () awful.util.spawn_with_shell("sleep 1 && scrot -s -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
 	awful.key({ modkey,           }, "\\", function () awful.util.spawn("chrome") end),
-	awful.key({ modkey,           }, "]", function () awful.util.spawn("thunar") end),
+	awful.key({ modkey,           }, "]", function () awful.util.spawn("nautilus") end),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
