@@ -62,7 +62,7 @@ local layouts =
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
-	awful.layout.suit.floating,
+    awful.layout.suit.floating,
 }
 -- }}}
 
@@ -77,7 +77,8 @@ end
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-for s = 1, screen.count() do
+tags[1] = awful.tag({ 7, 8, 9, 0, }, 1, layouts[1])
+for s = 2, screen.count() do
     -- Each screen has its own tag table.
     tags[s] = awful.tag({ 1, 2, 3, 4, }, s, layouts[1])
 end
@@ -188,7 +189,7 @@ for s = 1, screen.count() do
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(volume_widget)
     right_layout:add(mytextclock)
-	right_layout:add(bat_widget)
+    right_layout:add(bat_widget)
     right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
@@ -227,9 +228,9 @@ globalkeys = awful.util.table.join(
     -- awful.key({ modkey,           }, "w", function () mymainmenu:show() end),
 
     -- Layout manipulation
-	awful.key({ }, "Print", function () awful.util.spawn_with_shell("sleep 1 && scrot -s -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
-	awful.key({ modkey,           }, "\\", function () awful.util.spawn("chrome") end),
-	awful.key({ modkey,           }, "]", function () awful.util.spawn("nautilus") end),
+    awful.key({ }, "Print", function () awful.util.spawn_with_shell("sleep 1 && scrot -s -e 'mv $f ~/Pictures/screenshot/ 2>/dev/null'") end),
+    awful.key({ modkey,           }, "\\", function () awful.util.spawn("chrome") end),
+    awful.key({ modkey,           }, "]", function () awful.util.spawn("nautilus") end),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
@@ -272,27 +273,23 @@ globalkeys = awful.util.table.join(
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end),
 
-	-- Touchpad
-	awful.key({ }, "XF86TouchpadToggle", function ()
-		awful.util.spawn("/home/jeffwader/Programs/scripts/touchpad-toggle.sh") end),
+    -- Volume
+    awful.key({ }, "XF86AudioRaiseVolume", function ()
+        awful.util.spawn("amixer set Master 5%+")
+        update_volume(volume_widget) end),
+    awful.key({ }, "XF86AudioLowerVolume", function ()
+        awful.util.spawn("amixer set Master 5%-")
+        update_volume(volume_widget) end),
+    awful.key({ }, "XF86AudioMute", function ()
+        awful.util.spawn("amixer sset Master toggle")
+        update_volume(volume_widget) end),
 
-	-- Volume
-	awful.key({ }, "XF86AudioRaiseVolume", function ()
-		awful.util.spawn("amixer set Master 5%+")
-		update_volume(volume_widget) end),
-	awful.key({ }, "XF86AudioLowerVolume", function ()
-		awful.util.spawn("amixer set Master 5%-")
-		update_volume(volume_widget) end),
-	awful.key({ }, "XF86AudioMute", function ()
-		awful.util.spawn("amixer sset Master toggle")
-		update_volume(volume_widget) end),
-
-	-- hide/show wibox
-	awful.key({modkey}, "b", function()
-		for s = 1, screen.count() do
-			mywibox[s].visible = not mywibox[s].visible
-		end
-	end)
+    -- hide/show wibox
+    awful.key({modkey}, "b", function()
+        for s = 1, screen.count() do
+            mywibox[s].visible = not mywibox[s].visible
+        end
+    end)
 )
 
 clientkeys = awful.util.table.join(
@@ -319,46 +316,50 @@ clientkeys = awful.util.table.join(
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it works on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
-    globalkeys = awful.util.table.join(globalkeys,
+for i = 1, 4 do
+    local j = i + 6
+    globalkeys = awful.util.table.join(
+        globalkeys,
+        -- View tag only.
+        awful.key({ modkey }, "#" .. j + 9,
+            function()
+                local tag = awful.tag.gettags(1)[i]
+                awful.screen.focus(1)
+                awful.tag.viewonly(tag)
+            end
+        ),
+        -- Move client to tag.
+        awful.key({ modkey, "Shift" }, "#" .. j + 9,
+            function()
+                local tag = awful.tag.gettags(1)[i]
+                awful.client.movetotag(tag)
+            end
+        )
+    )
+end
+for i = 1, 4 do
+    globalkeys = awful.util.table.join(
+        globalkeys,
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
-                  function ()
-                        local screen = mouse.screen
-                        local tag = awful.tag.gettags(screen)[i]
-                        if tag then
-                           awful.tag.viewonly(tag)
-                        end
-                  end),
-        -- Toggle tag.
-        awful.key({ modkey, "Control" }, "#" .. i + 9,
-                  function ()
-                      local screen = mouse.screen
-                      local tag = awful.tag.gettags(screen)[i]
-                      if tag then
-                         awful.tag.viewtoggle(tag)
-                      end
-                  end),
+            function()
+                if screen.count() == 2 then
+                    local tag = awful.tag.gettags(2)[i]
+                    awful.screen.focus(2)
+                    awful.tag.viewonly(tag)
+                end
+            end
+        ),
         -- Move client to tag.
         awful.key({ modkey, "Shift" }, "#" .. i + 9,
-                  function ()
-                      if client.focus then
-                          local tag = awful.tag.gettags(client.focus.screen)[i]
-                          if tag then
-                              awful.client.movetotag(tag)
-                          end
-                     end
-                  end),
-        -- Toggle tag.
-        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
-                  function ()
-                      if client.focus then
-                          local tag = awful.tag.gettags(client.focus.screen)[i]
-                          if tag then
-                              awful.client.toggletag(tag)
-                          end
-                      end
-                  end))
+            function()
+                if screen.count() == 2 then
+                    local tag = awful.tag.gettags(2)[i]
+                    awful.client.movetotag(tag)
+                end
+            end
+        )
+    )
 end
 
 clientbuttons = awful.util.table.join(
@@ -459,7 +460,7 @@ client.connect_signal("manage", function (c, startup)
         layout:set_middle(middle_layout)
 
         awful.titlebar(c):set_widget(layout)
-	end
+    end
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
@@ -470,15 +471,15 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 autorun = true
 autorunApps =
 {
-	"fcitx",
-	"fcitx-qimpanel",
-	"xcompmgr -n",
-	"pkill -9 nm-applet; nm-applet",
+    "fcitx",
+    "fcitx-qimpanel",
+    "xcompmgr -n",
+    "pkill -9 nm-applet; nm-applet",
 }
 
 if autorun then
-	for app = 1, #autorunApps do
-		awful.util.spawn_with_shell(autorunApps[app])
-	end
+    for app = 1, #autorunApps do
+        awful.util.spawn_with_shell(autorunApps[app])
+    end
 end
 
