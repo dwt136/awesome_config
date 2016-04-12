@@ -63,8 +63,8 @@ theme.bg_urgent     = "#000000"
 theme.bg_minimize   = "#000000"
 
 theme.fg_normal     = "#666666"
-theme.fg_focus      = "#D4D4D4"
-theme.fg_urgent     = "#000000"
+theme.fg_focus      = "#DDDDDD"
+theme.fg_urgent     = "#666666"
 theme.fg_minimize   = "#000000"
 
 theme.border_width  = "1"
@@ -83,8 +83,8 @@ theme.border_marked = "#000000"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Display the taglist squares
-theme.taglist_squares_sel   = sharedthemes .. "/default/taglist/squarefw.png"
-theme.taglist_squares_unsel = sharedthemes .. "/default/taglist/squarew.png"
+--theme.taglist_squares_sel   = sharedthemes .. "/default/taglist/squarefw.png"
+--theme.taglist_squares_unsel = sharedthemes .. "/default/taglist/squarew.png"
 
 theme.tasklist_floating_icon = sharedthemes .. "/default/tasklist/floatingw.png"
 

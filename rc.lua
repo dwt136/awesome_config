@@ -58,9 +58,10 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
 {
-    awful.layout.suit.tile,
+    awful.layout.suit.fair,
     awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
+    awful.layout.suit.tile.right,
     awful.layout.suit.tile.top,
 }
 -- }}}
@@ -76,7 +77,7 @@ end
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-tags[1] = awful.tag({ 7, 8, 9, 0, }, 1, layouts[1])
+tags[1] = awful.tag({ " 7", " 8", " 9", " 0 ", }, 1, layouts[1])
 for s = 2, screen.count() do
     -- Each screen has its own tag table.
     tags[s] = awful.tag({ 1, 2, 3, 4, }, s, layouts[1])
@@ -105,23 +106,24 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock(" %H:%M ")
+mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ")
+bigtextclock = awful.widget.textclock("<span font_desc=\"WenQuanYi Micro Hei 24\" color=\"#888888\">                       %H:%M:%S</span>", 1)
 
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
 mylayoutbox = {}
-mytaglist = {}
-mytaglist.buttons = awful.util.table.join(
-                    awful.button({ }, 1, awful.tag.viewonly),
-                    awful.button({ modkey }, 1, awful.client.movetotag),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, awful.client.toggletag),
+bigwibox = {}
+bigtaglist = {}
+bigtaglist.buttons = awful.util.table.join(
+                    awful.button({ modkey }, 1, awful.tag.viewonly),
+                    awful.button({ modkey, "Control" }, 1, awful.client.movetotag),
+                    awful.button({ modkey }, 3, awful.tag.viewtoggle),
                     awful.button({ }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
                     awful.button({ }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end),
                     awful.button({ modkey }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
                     awful.button({ modkey }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
-                    )
+					)
 mytasklist = {}
 mytasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
@@ -174,18 +176,20 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    local taglist_squares_sel   = sharedthemes .. "/default/taglist/squarefw.png"
+    local taglist_squares_unsel = sharedthemes .. "/default/taglist/squarew.png"
 
     -- Create a tasklist widget
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "bottom", screen = s })
+	w = screen[s].workarea.width
+	h = screen[s].workarea.height
+    mywibox[s] = wibox{x=0, y=h-22, width=w, height=22, visible=false, ontop=true}
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(mylauncher)
-    left_layout:add(mytaglist[s])
     left_layout:add(mypromptbox[s])
 
     -- Widgets that are aligned to the right
@@ -203,6 +207,16 @@ for s = 1, screen.count() do
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)
+
+    bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#1e1e1e", bg_focus="#1e1e1e", bg_urgent="#1e1e1e", bg_occupied="#1e1e1e"})
+    local big_layout = wibox.layout.fixed.vertical()
+	big_layout:add(bigtaglist[s])
+    big_layout:add(bigtextclock)
+	x = w / 2 - 165
+	y = h / 2 - 70
+    bigwibox[s] = wibox{x=x, y=y, width=330, height=140, visible=false, ontop=true, bg="#1a1a1af0"}
+    bigwibox[s]:set_widget(big_layout)
+
 end
 -- }}}
 
@@ -220,7 +234,7 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
     -- awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     -- awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
-    awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+    -- awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
     awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
@@ -291,7 +305,7 @@ globalkeys = awful.util.table.join(
         update_volume(volume_widget) end),
 
     -- hide/show wibox
-    awful.key({modkey}, "b", function()
+    awful.key({modkey}, "Escape", function()
         for s = 1, screen.count() do
             mywibox[s].visible = not mywibox[s].visible
         end
@@ -375,6 +389,7 @@ clientbuttons = awful.util.table.join(
     awful.button({ modkey }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
     awful.button({ modkey }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
 )
+
 
 -- Set keys
 root.keys(globalkeys)
@@ -484,6 +499,8 @@ autorunApps =
     "fcitx-qimpanel",
     "xcompmgr -n",
     "pkill -9 nm-applet; nm-applet",
+	"pkill -9 xinput",
+	"autohidewibox.py /etc/autohidewibox.conf"
 }
 
 if autorun then
