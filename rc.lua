@@ -106,8 +106,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ")
-bigtextclock = awful.widget.textclock("<span font_desc=\"WenQuanYi Micro Hei 24\" color=\"#888888\">                       %H:%M:%S</span>", 1)
+bigtextclock = awful.widget.textclock("<span color=\"#888888\"><span font_desc=\"WenQuanYi Micro Hei 24\">    %b %d      %H:%M:%S</span></span>", 1)
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -197,7 +196,6 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(volume_widget)
-    right_layout:add(mytextclock)
     right_layout:add(bat_widget)
     right_layout:add(mylayoutbox[s])
 
@@ -210,7 +208,7 @@ for s = 1, screen.count() do
     mywibox[s]:set_widget(layout)
 
     tag_width = 330
-    tag_height = 140
+    tag_height = 142
     bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#2e2e2e55", bg_focus="#2e2e2e55", bg_urgent="#2e2e2e55", bg_occupied="#2e2e2e55"})
     local big_layout = wibox.layout.fixed.vertical()
     big_layout:add(bigtaglist[s])
