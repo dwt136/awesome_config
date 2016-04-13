@@ -185,7 +185,8 @@ for s = 1, screen.count() do
     -- Create the wibox
 	w = screen[s].workarea.width
 	h = screen[s].workarea.height
-    mywibox[s] = wibox{x=0, y=h-22, width=w, height=22, visible=false, ontop=true}
+    mywibox[s] = awful.wibox({ position="bottom" })
+	mywibox[s].visible = false
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
@@ -208,13 +209,13 @@ for s = 1, screen.count() do
 
     mywibox[s]:set_widget(layout)
 
-    bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#1e1e1e", bg_focus="#1e1e1e", bg_urgent="#1e1e1e", bg_occupied="#1e1e1e"})
+    bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#1e1e1e60", bg_focus="#1e1e1e60", bg_urgent="#1e1e1e60", bg_occupied="#1e1e1e60"})
     local big_layout = wibox.layout.fixed.vertical()
 	big_layout:add(bigtaglist[s])
     big_layout:add(bigtextclock)
 	x = w / 2 - 165
 	y = h / 2 - 70
-    bigwibox[s] = wibox{x=x, y=y, width=330, height=140, visible=false, ontop=true, bg="#1a1a1af0"}
+    bigwibox[s] = wibox{x=x, y=y, width=330, height=140, visible=false, ontop=true, bg="#1a1a1ae0"}
     bigwibox[s]:set_widget(big_layout)
 
 end
