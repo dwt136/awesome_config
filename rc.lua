@@ -123,7 +123,7 @@ bigtaglist.buttons = awful.util.table.join(
                     awful.button({ }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end),
                     awful.button({ modkey }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
                     awful.button({ modkey }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
-					)
+                    )
 mytasklist = {}
 mytasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
@@ -183,10 +183,10 @@ for s = 1, screen.count() do
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-	w = screen[s].workarea.width
-	h = screen[s].workarea.height
+    w = screen[s].workarea.width
+    h = screen[s].workarea.height
     mywibox[s] = awful.wibox({ position="bottom" })
-	mywibox[s].visible = false
+    mywibox[s].visible = false
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
@@ -209,13 +209,15 @@ for s = 1, screen.count() do
 
     mywibox[s]:set_widget(layout)
 
-    bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#1e1e1e60", bg_focus="#1e1e1e60", bg_urgent="#1e1e1e60", bg_occupied="#1e1e1e60"})
+    tag_width = 330
+    tag_height = 140
+    bigtaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, bigtaglist.buttons, {font="WenQuanYi Micro Hei 64", bg_empty="#2e2e2e55", bg_focus="#2e2e2e55", bg_urgent="#2e2e2e55", bg_occupied="#2e2e2e55"})
     local big_layout = wibox.layout.fixed.vertical()
-	big_layout:add(bigtaglist[s])
+    big_layout:add(bigtaglist[s])
     big_layout:add(bigtextclock)
-	x = w / 2 - 165
-	y = h / 2 - 70
-    bigwibox[s] = wibox{x=x, y=y, width=330, height=140, visible=false, ontop=true, bg="#1a1a1ae0"}
+    x = (w - tag_width) / 2
+    y = (h - tag_height) / 2
+    bigwibox[s] = wibox{x=x, y=y, width=tag_width, height=tag_height, visible=false, ontop=true, bg="#1a1a1ae0"}
     bigwibox[s]:set_widget(big_layout)
 
 end
@@ -355,6 +357,13 @@ for i = 1, 4 do
                 local tag = awful.tag.gettags(1)[i]
                 awful.client.movetotag(tag)
             end
+        ),
+        -- View toggle
+        awful.key({ modkey, "Control" }, "#" .. j + 9,
+            function()
+                local tag = awful.tag.gettags(1)[i]
+                awful.tag.viewtoggle(tag)
+            end
         )
     )
 end
@@ -379,7 +388,17 @@ for i = 1, 4 do
                     awful.client.movetotag(tag)
                 end
             end
+        ),
+        -- View toggle
+        awful.key({ modkey, "Control" }, "#" .. i + 9,
+            function()
+                if screen.count() == 2 then
+                    local tag = awful.tag.gettags(2)[i]
+                    awful.tag.viewtoggle(tag)
+                end
+            end
         )
+
     )
 end
 
@@ -500,8 +519,8 @@ autorunApps =
     "fcitx-qimpanel",
     "xcompmgr -n",
     "pkill -9 nm-applet; nm-applet",
-	"pkill -9 xinput",
-	"autohidewibox.py /etc/autohidewibox.conf"
+    "pkill -9 xinput",
+    "autohidewibox.py /etc/autohidewibox.conf"
 }
 
 if autorun then
